@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ministerial Presentation - National Education Intelligence Command Center</title>
+    <style>
+        :root {
+            --bg-color: #020617;
+            --surface-color: #0f172a;
+            --primary: #38bdf8;
+            --accent: #2dd4bf;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: #1e293b;
+            --critical: #ef4444;
+            --warning: #f59e0b;
+            --stable: #22c55e;
+            --glass: rgba(15, 23, 42, 0.8);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Slide Container */
+        #presentation-container {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Individual Slides */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 4rem 6rem;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            background: linear-gradient(135deg, var(--bg-color) 0%, var(--surface-color) 100%);
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            border-left: 6px solid var(--primary);
+            padding-left: 1.5rem;
+        }
+
+        p {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: var(--text-dim);
+            margin-bottom: 1.5rem;
+        }
+
+        ul {
+            list-style: none;
+            font-size: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 2rem;
+            line-height: 1.4;
+        }
+
+        li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Components */
+        .highlight-box {
+            background: var(--surface-color);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .metric-card {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            display: block;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+        }
+
+        /* Notes Section */
+        #notes-overlay {
+            position: fixed;
+            bottom: 80px;
+            right: 40px;
+            width: 400px;
+            max-height: 300px;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            color: var(--text-dim);
+        }
+
+        #notes-overlay.visible {
+            display: block;
+        }
+
+        #notes-header {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+        }
+
+        /* UI Controls */
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        .control-btn {
+            background: var(--surface-color);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-btn:hover {
+            background: var(--border);
+            border-color: var(--primary);
+        }
+
+        .slide-counter {
+            font-family: monospace;
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            margin-right: 1rem;
+        }
+
+        .logo-mini {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 1000;
+        }
+
+        .logo-box {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 10px;
+        }
+
+        .logo-text {
+            font-weight: 800;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        /* Print/PDF Export */
+        @media print {
+            .slide {
+                position: relative !important;
+                display: block !important;
+                opacity: 1 !important;
+                page-break-after: always;
+                height: 100vh !important;
+                width: 100vw !important;
+            }
+            .controls, .logo-mini { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-mini">
+        <div class="logo-box"></div>
+        <div class="logo-text">NEID Command</div>
+    </div>
+
+    <div id="presentation-container">
+        <!-- Slide 1 -->
+        <section class="slide active" data-notes="Opening ministerial address. Frame the discussion around strategic shift and governance transformation.">
+            <h1 style="text-align: center;">National Education Intelligence Command Center</h1>
+            <p style="text-align: center; font-size: 1.5rem;">Transforming Governance Through Data-Driven Leadership</p>
+            <div class="highlight-box" style="text-align: center; border-color: var(--primary);">
+                <ul style="display: inline-block; text-align: left;">
+                    <li>Ministry-level strategic oversight</li>
+                    <li>Unified operational governance</li>
+                    <li>Predictive policy architecture</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Slide 2 -->
+        <section class="slide" data-notes="Focus on the pain points. Use terms like 'reporting latency' and 'reactive posture'.">
+            <h2>Current Governance Gaps</h2>
+            <ul>
+                <li>Fragmented Data trapped in siloed departamental systems</li>
+                <li>Delayed Reporting cycles (90+ days latency)</li>
+                <li>Reactive Decision-Making based on outdated information</li>
+                <li>Lack of Real-Time Risk Visibility into district clusters</li>
+            </ul>
+            <div class="metric-grid">
+                <div class="metric-card" style="border-left: 4px solid var(--critical);">
+                    <span class="metric-label">Avg. Latency</span>
+                    <span class="metric-value">90 Days</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3 -->
+        <section class="slide" data-notes="Explain the 'Strategic Calm' philosophy — reducing complexity for high-stakes decision makers.">
+            <h2>The Unified Intelligence Vision</h2>
+            <ul>
+                <li>Centralized Intelligence: Single source of truth for all tiers</li>
+                <li>Real-Time Transparency into enrollment and quality metrics</li>
+                <li>Proactive Governance: Intervening by signal, not crisis</li>
+                <li>Strategic Calm: Intuitive design for ministerial clarity</li>
+            </ul>
+        </section>
+
+        <!-- Slide 4 -->
+        <section class="slide" data-notes="Explain the drilldown model. National to Institution integrity.">
+            <h2>Hierarchical Intelligence Model</h2>
+            <p>A rigorous architecture designed for sectoral scaling.</p>
+            <div class="highlight-box">
+                <ul>
+                    <li>Tier-Based Structure (Primary → University)</li>
+                    <li>Dynamic Drilldown (National → State → District → School)</li>
+                    <li>URL-First Governance for departmental synchronization</li>
+                    <li>Bottom-Up Aggregation ensuring absolute data integrity</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Slide 5 -->
+        <section class="slide" data-notes="Explain how the dashboard prioritizes 'Signals over Noise'.">
+            <h2>Strategic Mode: Minister's View</h2>
+            <ul>
+                <li>AI-Powered Executive Insight Strip for priority actions</li>
+                <li>Risk-First Layout: Surface critical issues automatically</li>
+                <li>RAG Severity System (Red-Amber-Green indicators)</li>
+                <li>Unified National KPI tracking at a glance</li>
+            </ul>
+            <div class="metric-grid">
+                <div class="metric-card"><span class="metric-label">Status</span><span class="metric-value" style="color: var(--critical);">Critical</span></div>
+                <div class="metric-card"><span class="metric-label">Status</span><span class="metric-value" style="color: var(--warning);">Warning</span></div>
+                <div class="metric-card"><span class="metric-label">Status</span><span class="metric-value" style="color: var(--stable);">Stable</span></div>
+            </div>
+        </section>
+
+        <!-- Slide 6 -->
+        <section class="slide" data-notes="Show how administrators manage compliance and audit cycles.">
+            <h2>Operational Mode: Administrative View</h2>
+            <ul>
+                <li>National Institution Rankings and benchmarking</li>
+                <li>Governance Panel: Accreditation and audit monitoring</li>
+                <li>Detailed Alert Logs for tactical district management</li>
+                <li>Operational Transparency across school administrations</li>
+            </ul>
+        </section>
+
+        <!-- Slide 7 -->
+        <section class="slide" data-notes="Explain the technical enum-based normalization that makes data comparable across states.">
+            <h2>Data Integrity Foundations</h2>
+            <ul>
+                <li>Enum-Based Tier Normalization for cross-sector analysis</li>
+                <li>Centralized State (Zustand) ensuring widget consistency</li>
+                <li>Mathematical Bottom-Up aggregation logic</li>
+                <li>Session Persistence for collaborative deep-dives</li>
+            </ul>
+        </section>
+
+        <!-- Slide 8 -->
+        <section class="slide" data-notes="Explain the 'Early Warning' capability. Prevention is cheaper than correction.">
+            <h2>Risk & Signal Intelligence</h2>
+            <ul>
+                <li>Risk Thresholds tied to automated district alerts</li>
+                <li>Dropout Surge Detection before academic cycle end</li>
+                <li>Financial Oversight: Real-time budget utilization tracking</li>
+                <li>Severity Prioritization to reduce ministerial cognitive load</li>
+            </ul>
+        </section>
+
+        <!-- Slide 9 -->
+        <section class="slide" data-notes="Mention the 2031 projection horizon.">
+            <h2>Predictive & Forecast Capabilities</h2>
+            <ul>
+                <li>Forecast Simulator: Modeling 'What If' policy scenarios</li>
+                <li>AI-Driven Projections for resource and capacity planning</li>
+                <li>Interactive growth rate and budget impact analysis</li>
+                <li>Planning horizons extending to 2031 and beyond</li>
+            </ul>
+        </section>
+
+        <!-- Slide 10 -->
+        <section class="slide" data-notes="Transparency and equity monitoring.">
+            <h2>Scholarship & Governance Monitoring</h2>
+            <ul>
+                <li>Scholarship Funnel: Visualizing application-to-award pipeline</li>
+                <li>Impact Assessment: Correlating spend with graduation rates</li>
+                <li>Audit Status: Monitoring institutional reform compliance</li>
+                <li>Strategic Accountability for public trust</li>
+            </ul>
+        </section>
+
+        <!-- Slide 11 -->
+        <section class="slide" data-notes="Enterprise grade tech. TypeScript and React.">
+            <h2>Technology Infrastructure</h2>
+            <ul>
+                <li>React & TypeScript for enterprise-grade maintainability</li>
+                <li>Memoized Engine built for national-scale datasets</li>
+                <li>Modular Architecture ready for legacy API integration</li>
+                <li>Cloud-Native deployment for distributed access</li>
+            </ul>
+        </section>
+
+        <!-- Slide 12 -->
+        <section class="slide" data-notes="Future features: Health Index and AI engines.">
+            <h2>Security & Future Roadmap</h2>
+            <ul>
+                <li>Role-Based Access Control (RBAC) for data security</li>
+                <li>Live Data Ingestion from existing state silos</li>
+                <li>AI Health Index for autonomous district scoring</li>
+                <li>Public Transparency Portals for citizen engagement</li>
+            </ul>
+        </section>
+
+        <!-- Slide 13 -->
+        <section class="slide" data-notes="Summary of value. Fast decisions = better outcomes.">
+            <h2>Impact for the Ministry</h2>
+            <ul>
+                <li>Faster Decisions: Reduced from months to live insights</li>
+                <li>Reduced Silos: Unified visibility across all education tiers</li>
+                <li>Risk-Based Intervention: Optimized resource allocation</li>
+                <li>Enhanced Public Trust through transparent governance</li>
+            </ul>
+        </section>
+
+        <!-- Slide 14 -->
+        <section class="slide" data-notes="Current status: UI and Drilldown are operational.">
+            <h2>The Implementation Path</h2>
+            <ul>
+                <li><strong>Phase 1:</strong> Frontend Intelligence Layer (Operational)</li>
+                <li><strong>Phase 2:</strong> Real-time Data API Integration</li>
+                <li><strong>Phase 3:</strong> AI-Powered Predictive Analysis Engine</li>
+                <li><strong>Phase 4:</strong> Full National Integrated Health Stack</li>
+            </ul>
+        </section>
+
+        <!-- Slide 15 -->
+        <section class="slide" data-notes="Final vision statement. Move from reactive to predictive.">
+            <h1 style="text-align: center; color: var(--accent);">From Reactive Governance to Predictive Leadership</h1>
+            <p style="text-align: center; font-size: 1.5rem;">Empowering the Future of National Education</p>
+            <div style="text-align: center; margin-top: 4rem;">
+                <p>National Education Intelligence Dashboard</p>
+                <div class="logo-box" style="display: inline-block; margin-top: 1rem;"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Notes Overlay -->
+    <div id="notes-overlay">
+        <div id="notes-header">Speaker Notes (Internal)</div>
+        <div id="notes-content"></div>
+    </div>
+
+    <!-- UI Controls -->
+    <div class="controls">
+        <span class="slide-counter" id="progress">1 / 15</span>
+        <button class="control-btn" onclick="toggleNotes()" id="btn-notes">Toggle Notes</button>
+        <button class="control-btn" onclick="prevSlide()" id="btn-prev">Prev</button>
+        <button class="control-btn" onclick="nextSlide()" id="btn-next">Next</button>
+        <button class="control-btn" onclick="toggleFullscreen()" id="btn-fs">⛶</button>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressEl = document.getElementById('progress');
+        const notesContent = document.getElementById('notes-content');
+        const notesOverlay = document.getElementById('notes-overlay');
+        let currentSlide = 0;
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if(index === currentSlide) {
+                    slide.classList.add('active');
+                    // Update notes
+                    notesContent.innerText = slide.getAttribute('data-notes') || "No specific notes for this slide.";
+                }
+            });
+            progressEl.innerText = `${currentSlide + 1} / ${slides.length}`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        function toggleNotes() {
+            notesOverlay.classList.toggle('visible');
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === 'n') toggleNotes();
+            if (e.key === 'f') toggleFullscreen();
+        });
+
+        // Initialize first slide notes
+        updateSlide();
+    </script>
+</body>
+</html>
