@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduGov — National Education Intelligence Dashboard</title>
+  <meta name="description"
+    content="Strategic analytics platform for India's Ministry of Education. Real-time insights on enrollment, scholarships, institutional performance, and policy governance.">
+  <meta name="author" content="Ministry of Education, Government of India" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="EduGov — National Education Dashboard">
+  <meta property="og:description" content="Strategic analytics platform for India's Ministry of Education.">
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="EduGov — National Education Dashboard">
+  <meta name="twitter:description" content="Strategic analytics platform for India's Ministry of Education.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <script>
+    // FOUC prevention: apply theme class before first paint (supports 3 themes)
+    (function () {
+      var theme = localStorage.getItem('theme');
+      var root = document.documentElement;
+      root.classList.remove('dark', 'light', 'high-contrast');
+      if (theme === 'light') {
+        root.classList.add('light');
+      } else if (theme === 'high-contrast') {
+        root.classList.add('high-contrast');
+      } else if (theme === 'dark') {
+        root.classList.add('dark');
+      } else {
+        // system preference fallback
+        if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+          root.classList.add('light');
+        } else if (window.matchMedia('(prefers-contrast: more)').matches) {
+          root.classList.add('high-contrast');
+        } else {
+          root.classList.add('dark');
+        }
+      }
+    })();
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>
